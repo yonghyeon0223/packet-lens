@@ -1,10 +1,18 @@
-from analyser import compute_protocol_distribution
+import analyser
+import graph
+from pathlib import Path
 
 
-def analyse_example_pcap_file(path: str):
-    protocol_distribution = compute_protocol_distribution(path)
-    print(protocol_distribution)
+def analyse_example_pcap_file(logname: str):
+    LOGPATH = f"logs/{logname}.pcap"
+
+    # A1 = "protocol_distribution"
+    # dist = analyser.compute_protocol_distribution(LOGPATH)
+    # graph.plot_protocol_distribution(dist, f"report/{logname}_{A1}.png")
+
+    A2 = "port_usage_over_time"
+    port_usage = analyser.compute_port_usage(LOGPATH)
 
 
 if __name__ == "__main__":
-    analyse_example_pcap_file("logs/snort-log-01.pcap")
+    analyse_example_pcap_file("snort-log-01")
