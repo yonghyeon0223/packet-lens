@@ -2,7 +2,7 @@ import analyser
 import graph
 
 
-def analyse_example_pcap_file(logname: str):
+def analyse_example_pcap_file(logname: str, port_interval):
     LOGPATH = f"logs/{logname}.pcap"
 
     A1 = "protocol_distribution"
@@ -14,8 +14,14 @@ def analyse_example_pcap_file(logname: str):
     graph.plot_port_usage_over_time(port_usage, f"report/{logname}_{A2}.png")
 
     A3 = "port_usage_by_ip_addr"
-    graph.plot_port_usage_by_ip_addr(port_usage, f"report/{logname}_{A3}.png")
+    graph.plot_port_usage_by_ip_addr(
+        port_usage, f"report/{logname}_{A3}.png", interval=port_interval
+    )
+
+    A4 = "extract_text_info"
+    analyser.analyse_tcp_payload(LOGPATH)
 
 
 if __name__ == "__main__":
-    analyse_example_pcap_file("snort-log-01")
+    analyse_example_pcap_file("snort-log-01", 2000)
+    # analyse_example_pcap_file("pgsql-jdbc", 20)

@@ -49,20 +49,22 @@ def plot_port_usage_over_time(df: pd.DataFrame, save_path):
     plt.savefig(save_path)
 
 
-def plot_port_usage_by_ip_addr(df: pd.DataFrame, save_path):
+def plot_port_usage_by_ip_addr(df: pd.DataFrame, save_path, interval=1000):
     top_ips = df["src_ip"].value_counts().nlargest(30).index
     df2 = df[df["src_ip"].isin(top_ips)].copy()
 
-    n = 2000
-    df2["port_range"] = (df2["port"] // n) * n
+    df2["port_range"] = (df2["port"] // interval) * interval
     df2["port_range_label"] = (
-        df2["port_range"].astype(str) + "-" + (df2["port_range"] + n - 1).astype(str)
+        df2["port_range"].astype(str)
+        + "-"
+        + (df2["port_range"] + interval - 1).astype(str)
     )
 
     pivot_df = df2.groupby(["src_ip", "port_range_label"]).size().unstack(fill_value=0)
     pivot_df = pivot_df[
         sorted(pivot_df.columns, key=lambda x: int(str(x).split("-")[0]))
     ]
+
     bounds = [0, 1, 10, 100, 1000, pivot_df.to_numpy().max()]
     norm = BoundaryNorm(bounds, ncolors=256)
 
