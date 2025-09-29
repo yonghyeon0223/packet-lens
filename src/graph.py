@@ -4,9 +4,6 @@ from matplotlib.colors import BoundaryNorm
 import pandas as pd
 import seaborn as sns
 import re
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly.io as pio
 import squarify
 
 

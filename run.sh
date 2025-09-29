@@ -4,7 +4,7 @@ set -e
 
 echo "🔧 Installing required system packages..."
 sudo apt update
-sudo apt install -y python3 python3-venv python3-pip
+sudo apt install -y tshark python3 python3-venv python3-pip
 
 # Step 2: Create project directory and virtual environment
 PROJECT_DIR="$HOME/Projects/packet-lens"
@@ -22,10 +22,9 @@ echo "📦 Activating virtual environment and installing python packages..."
 source "$VENV_DIR/bin/activate"
 
 pip install --upgrade pip
-pip install squarify
-
+pip install matplotlib pandas seaborn squarify
 python3 src/main.py
 
-# Step 5: Deactivate virtual environment
+# Step 4: Deactivate virtual environment
 deactivate
 echo "🚪 Virtual environment deactivated. Setup complete!"
