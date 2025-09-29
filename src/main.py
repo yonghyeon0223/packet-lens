@@ -28,13 +28,9 @@ def visualize_example_pcap_file(logname: str, port_interval):
 
 
 if __name__ == "__main__":
-    server_list = capturer.capture_all(capture_time=30, capture=False)
+    server_list = capturer.capture_all(capture_time=600, capture=False)
 
     for server in server_list:
-        port_range = 20
-        if server.startswith("ec2-user"):
-            port_range = 3000
-        visualize_example_pcap_file(server, port_range)
+        visualize_example_pcap_file(server, 3000)
 
     visualize_example_pcap_file("snort-log-01", 3000)
-    visualize_example_pcap_file("pgsql-jdbc", 20)

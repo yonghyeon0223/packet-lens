@@ -28,6 +28,7 @@ def plot_protocol_distribution(protocol_counter, save_path):
             " " + str(count),
             va="center",
         )
+    plt.tight_layout()
     plt.savefig(save_path)
 
 
@@ -48,6 +49,7 @@ def plot_port_usage_over_time(df: pd.DataFrame, save_path):
     plt.title("Unique Ports Contacted per 1-Minute Window")
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
     plt.grid(True, linestyle="--", alpha=0.5)
+    plt.tight_layout()
     plt.savefig(save_path)
     plt.close()
 
@@ -80,6 +82,7 @@ def plot_port_usage_by_ip_addr(df: pd.DataFrame, save_path, interval=1000):
     plt.title("Unique Port Range Contacted per IP-address")
     plt.xlabel("Destination Port")
     plt.ylabel("Source IP")
+    plt.tight_layout()
     plt.savefig(save_path)
     plt.close()
 
@@ -100,5 +103,6 @@ def heatmap_tcp_payload(df: pd.DataFrame, save_path):
     )
     plt.axis("off")
     plt.title("Top Words in TCP Payloads")
+    plt.tight_layout()
     plt.savefig(save_path)
     plt.close()
