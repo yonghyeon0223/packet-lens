@@ -3,7 +3,6 @@
 set -e
 
 echo "🔧 Installing required system packages..."
-sudo apt update
 sudo apt install -y tshark python3 python3-venv python3-pip
 
 # Step 2: Create project directory and virtual environment
@@ -21,10 +20,11 @@ python3 -m venv "$VENV_DIR"
 echo "📦 Activating virtual environment and installing python packages..."
 source "$VENV_DIR/bin/activate"
 
-pip install --upgrade pip
 pip install matplotlib pandas seaborn squarify
+
+echo -e "🚀 Running main.py..."
 python3 src/main.py
+echo -e "✅ Analysis complete!"
 
 # Step 4: Deactivate virtual environment
 deactivate
-echo "🚪 Virtual environment deactivated. Setup complete!"

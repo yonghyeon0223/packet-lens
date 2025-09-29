@@ -6,6 +6,8 @@ import seaborn as sns
 import re
 import squarify
 
+plt.rcParams.update({"font.size": 16})
+
 
 def plot_protocol_distribution(protocol_counter, save_path):
     sorted_items = sorted(protocol_counter.items(), key=lambda x: x[1], reverse=True)
@@ -26,7 +28,6 @@ def plot_protocol_distribution(protocol_counter, save_path):
             " " + str(count),
             va="center",
         )
-    plt.tight_layout()
     plt.savefig(save_path)
 
 
@@ -47,12 +48,12 @@ def plot_port_usage_over_time(df: pd.DataFrame, save_path):
     plt.title("Unique Ports Contacted per 1-Minute Window")
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
     plt.grid(True, linestyle="--", alpha=0.5)
-    plt.tight_layout()
     plt.savefig(save_path)
+    plt.close()
 
 
 def plot_port_usage_by_ip_addr(df: pd.DataFrame, save_path, interval=1000):
-    top_ips = df["src_ip"].value_counts().nlargest(30).index
+    top_ips = df["src_ip"].value_counts().nlargest(20).index
     df2 = df[df["src_ip"].isin(top_ips)].copy()
 
     df2["port_range"] = (df2["port"] // interval) * interval
@@ -67,7 +68,10 @@ def plot_port_usage_by_ip_addr(df: pd.DataFrame, save_path, interval=1000):
         sorted(pivot_df.columns, key=lambda x: int(str(x).split("-")[0]))
     ]
 
-    bounds = [0, 1, 10, 100, 1000, pivot_df.to_numpy().max()]
+    max_val = pivot_df.to_numpy().max()
+    bounds = [0, 1, 10, 100, 1000]
+    if max_val > 1000:
+        bounds.append(max_val)
     norm = BoundaryNorm(bounds, ncolors=256)
 
     plt.figure(figsize=(12, 10))
@@ -76,16 +80,18 @@ def plot_port_usage_by_ip_addr(df: pd.DataFrame, save_path, interval=1000):
     plt.title("Unique Port Range Contacted per IP-address")
     plt.xlabel("Destination Port")
     plt.ylabel("Source IP")
-    plt.tight_layout()
     plt.savefig(save_path)
+    plt.close()
 
 
 def heatmap_tcp_payload(df: pd.DataFrame, save_path):
+    if len(df) == 0:
+        return
     whole_text = " ".join(df["payload"].dropna().tolist())
     words = re.findall(r"\b\w{3,}\b", whole_text.lower())
-    word_counter = pd.Series(words).value_counts().head(10)
+    word_counter = pd.Series(words).value_counts().head(20)
 
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(12, 10))
     squarify.plot(
         sizes=word_counter.values,
         label=word_counter.index,
@@ -93,6 +99,6 @@ def heatmap_tcp_payload(df: pd.DataFrame, save_path):
         alpha=0.8,
     )
     plt.axis("off")
-    plt.title("Top Words in TCP Payloads", fontsize=18)
-    plt.tight_layout()
+    plt.title("Top Words in TCP Payloads")
     plt.savefig(save_path)
+    plt.close()
