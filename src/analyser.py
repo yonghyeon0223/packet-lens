@@ -1,8 +1,8 @@
 import subprocess
 from collections import Counter
 import pandas as pd
-from wordcloud import wordcloud
 import binascii
+import re
 
 
 def compute_protocol_distribution(path: str) -> Counter:
@@ -44,7 +44,7 @@ def compute_port_usage(path: str) -> pd.DataFrame:
 def analyse_tcp_payload(path: str) -> pd.DataFrame:
     try:
         cmd1 = ["tshark", "-r", path, "-T", "fields", "-Y", "tcp.payload"]
-        cmd2 = ["-e", "ip.src", "-e", "ip.dst", "-e", "frame.time", "-e" "tcp.payload"]
+        cmd2 = ["-e", "ip.src", "-e", "ip.dst", "-e", "frame.time", "-e", "tcp.payload"]
         result = subprocess.run(cmd1 + cmd2, capture_output=True, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"❌ Error running tshark: {e}")
@@ -60,8 +60,10 @@ def analyse_tcp_payload(path: str) -> pd.DataFrame:
             payload = binascii.unhexlify(hex_payload.replace(":", "")).decode(
                 "utf-8", errors="ignore"
             )
+            records.append(
+                {"src_ip": src, "dst_ip": dst, "time": time, "payload": payload}
+            )
         except Exception:
-            payload = ""
-        records.append({"src": src, "dst": dst, "time": time, "payload": payload})
+            pass
 
     return pd.DataFrame(records)

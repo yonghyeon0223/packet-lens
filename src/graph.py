@@ -3,6 +3,11 @@ import matplotlib.dates as mdates
 from matplotlib.colors import BoundaryNorm
 import pandas as pd
 import seaborn as sns
+import re
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+import squarify
 
 
 def plot_protocol_distribution(protocol_counter, save_path):
@@ -29,7 +34,7 @@ def plot_protocol_distribution(protocol_counter, save_path):
 
 
 def plot_port_usage_over_time(df: pd.DataFrame, save_path):
-    df["time_bin"] = df["time"].dt.floor("1T")
+    df["time_bin"] = df["time"].dt.floor("1min")
     unique_counts = df.groupby("time_bin")["port"].nunique().reset_index()
 
     plt.figure(figsize=(12, 10))
@@ -74,5 +79,23 @@ def plot_port_usage_by_ip_addr(df: pd.DataFrame, save_path, interval=1000):
     plt.title("Unique Port Range Contacted per IP-address")
     plt.xlabel("Destination Port")
     plt.ylabel("Source IP")
+    plt.tight_layout()
+    plt.savefig(save_path)
+
+
+def heatmap_tcp_payload(df: pd.DataFrame, save_path):
+    whole_text = " ".join(df["payload"].dropna().tolist())
+    words = re.findall(r"\b\w{3,}\b", whole_text.lower())
+    word_counter = pd.Series(words).value_counts().head(10)
+
+    plt.figure(figsize=(12, 8))
+    squarify.plot(
+        sizes=word_counter.values,
+        label=word_counter.index,
+        color=plt.cm.Blues(word_counter.values / max(word_counter.values)),
+        alpha=0.8,
+    )
+    plt.axis("off")
+    plt.title("Top Words in TCP Payloads", fontsize=18)
     plt.tight_layout()
     plt.savefig(save_path)

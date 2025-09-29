@@ -18,8 +18,9 @@ def analyse_example_pcap_file(logname: str, port_interval):
         port_usage, f"report/{logname}_{A3}.png", interval=port_interval
     )
 
-    A4 = "extract_text_info"
-    analyser.analyse_tcp_payload(LOGPATH)
+    A4 = "top_used_keywords"
+    top_words = analyser.analyse_tcp_payload(LOGPATH)
+    graph.heatmap_tcp_payload(top_words, f"report/{logname}_{A4}.png")
 
 
 if __name__ == "__main__":
